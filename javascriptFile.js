@@ -49,19 +49,29 @@ function playRound(playerChoice, compChoice) {
 
 }
 
-var playerScore = 0;
-var compScore = 0;
+function playGame() {
+    
+    var numRounds = 5;
+    var playerScore = 0;
+    var compScore = 0;
 
-var compChoice = getComputerChoice();
-var playerChoice = getHumanChoice();
+    for (var i = 0; i < numRounds; i++) {
 
-var result = playRound(compChoice, playerChoice);
+        var compChoice = getComputerChoice();
+        var playerChoice = getHumanChoice();
 
-if (result == "human") {
-    playerScore += 1;
+        var result = playRound(playerChoice, compChoice);
+        if (result == "human") {
+            playerScore += 1;
+        }
+        else if (result == "comp") {
+            compScore += 1
+        }
+    }
+
+    return [playerScore, compScore]
 }
-else if (result == "comp") {
-    compScore += 1
-}
 
+var finalScore = playGame()
 
+console.log(`Final Score: player: ${finalScore[0]}, computer: ${finalScore[1]}`)
