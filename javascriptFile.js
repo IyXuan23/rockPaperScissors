@@ -13,24 +13,10 @@ function getComputerChoice() {
     }
 }
 
-function getHumanChoice() {
-
-    var choice  = prompt("Type rock, paper or scissors:");
-
-    choice = choice.toLowerCase();
-
-    if (choice == "rock" || choice == "paper" || choice == "scissors") {
-        return choice;
-    }
-
-    return null;
-
-}
-
-function playRound(playerChoice, compChoice) {
+function playRound(playerChoice, compChoice, messageBoard) {
     
     if (playerChoice == compChoice) {
-        console.log("Draw!")
+        messageBoard.textContent = 'Draw!'
         return "draw";
     }
 
@@ -38,40 +24,78 @@ function playRound(playerChoice, compChoice) {
         (playerChoice == "paper" && compChoice == "rock") || 
         (playerChoice == "scissors" && compChoice == "paper")) {
 
-        console.log(`You win, ${playerChoice} beats ${compChoice}`);
-        return "human";
+        messageBoard.textContent = `You win, ${playerChoice} beats ${compChoice}!`;
+        return "Human";
     }
 
     else {
-        console.log(`You lose, ${compChoice} beats ${playerChoice}`);
-        return "comp";
+        messageBoard.textContent = `You lose, ${compChoice} beats ${playerChoice}!`;
+        return "Comp";
     }
 
 }
 
-function playGame() {
+//return of 1 means game continues, return of 0 means game ends
+function updateScores(winner, playerScore, compScore, messageBoard) {
     
-    var numRounds = 5;
-    var playerScore = 0;
-    var compScore = 0;
-
-    for (var i = 0; i < numRounds; i++) {
-
-        var compChoice = getComputerChoice();
-        var playerChoice = getHumanChoice();
-
-        var result = playRound(playerChoice, compChoice);
-        if (result == "human") {
-            playerScore += 1;
-        }
-        else if (result == "comp") {
-            compScore += 1
-        }
+    if (winner == 'Human') {
+        playerScore++;
     }
+    else if (winner == 'Comp') {
+        compScore++;
+    }
+    if (playerScore == 5 || compScore == 5) {
 
-    return [playerScore, compScore]
+        var newMessage = messageBoard.textContent + '\n' 
+                            + `${winner} has won!`;
+
+        messageBoard.textContent = newMessage;
+        return [playerScore, compScore, 0];
+    }
+    return [playerScore, compScore, 1];
 }
 
-var finalScore = playGame()
+function endGame(buttonList) {
+    
+    var i = 0;
+    while (i < buttonList.length) {
+        buttonList[i].disabled = true;
+        i++;
+    }
+}
 
-console.log(`Final Score: player: ${finalScore[0]}, computer: ${finalScore[1]}`)
+//initialise scores
+var playerScore = 0;
+var compScore = 0;
+var toContinue = 1;
+
+var messageBoard = document.querySelector('div.messageBoard');
+
+//add the eventListeners to the buttons
+var buttonList = document.querySelectorAll("button");
+var i = 0;
+
+while (i < buttonList.length) {
+    buttonList[i].addEventListener("click", function() {
+        playerChoice = this.textContent;
+        playerChoice = playerChoice.toLowerCase();
+
+        var computerChoice = getComputerChoice();
+
+        winner = playRound(playerChoice, computerChoice, window.messageBoard);
+
+        var values = updateScores(winner, window.playerScore, window.compScore,
+                                    window.messageBoard);
+        window.playerScore = values[0];
+        window.compScore = values[1];
+        window.toContinue = values[2];
+        
+        //end the game once someone reaches 5 points
+        if (window.toContinue == 0) {
+            endGame(window.buttonList);
+        }
+    });
+
+    i++;
+}
+

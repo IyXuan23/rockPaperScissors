@@ -1,0 +1,19 @@
+ul {
+    list-style: none;
+}
+
+button {
+    margin-bottom: 8px;
+    width: 150px;
+    height: 50px;
+}
+
+.messageBoardTitle {
+    font-size: large;
+}
+
+.messageBoard {
+    border: 4px black solid;
+    min-height: 100px;
+    padding: 4px;
+}
